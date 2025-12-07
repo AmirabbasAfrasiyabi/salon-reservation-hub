@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ثبت‌نام - سامانه رزرواسیون</title>
+
+    <!-- Bootstrap RTL -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+
+    <style>
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .register-container {
+            max-width: 500px;
+            width: 100%;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .card-body {
+            padding: 2.5rem;
+        }
+        h2 {
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 2rem;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #555;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 12px;
+            font-weight: bold;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        .form-check-input:checked {
+            background-color: #667eea;
+            border-color: #667eea;
+        }
+        .alert {
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="text-center">ثبت‌نام در سامانه</h2>
+
+                <!-- نمایش پیام‌ها -->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="post" action="{% url 'account:register' %}">
+                    {% csrf_token %}
+
+                    <!-- نام کاربری -->
+                    <div class="mb-3">
+                        <label for="username" class="form-label">نام کاربری *</label>
+                        <input type="text" class="form-control" id="username" name="username"
+                               placeholder="نام کاربری خود را وارد کنید" required>
+                    </div>
+
+                    <!-- شماره موبایل -->
+                    <div class="mb-3">
+                        <label for="phone_number" class="form-label">شماره موبایل *</label>
+                        <input type="text" class="form-control" id="phone_number" name="phone_number"
+                               placeholder="09123456789" pattern="09\d{9}" maxlength="11" required>
+                        <div class="form-text">مثال: 09123456789</div>
+                    </div>
+
+                    <!-- ایمیل -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label">ایمیل *</label>
+                        <input type="email" class="form-control" id="email" name="email"
+                               placeholder="example@email.com" required>
+                    </div>
+
+                    <!-- نوع کاربر -->
+                    <div class="mb-3">
+                        <label class="form-label">نوع کاربری *</label>
+                        <div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="user_type"
+                                       id="customer" value="customer" checked>
+                                <label class="form-check-label" for="customer">
+                                    👤 مشتری (دریافت خدمات)
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="user_type"
+                                       id="stylist" value="stylist">
+                                <label class="form-check-label" for="stylist">
+                                    ✂️ آرایشگر (ارائه خدمات)
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="user_type"
+                                       id="salon_owner" value="salon_owner">
+                                <label class="form-check-label" for="salon_owner">
+                                    🏢 مالک آرایشگاه
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- رمز عبور -->
+                    <div class="mb-3">
+                        <label for="password" class="form-label">رمز عبور *</label>
+                        <input type="password" class="form-control" id="password" name="password"
+                               placeholder="حداقل 8 کاراکتر" minlength="8" required>
+                    </div>
+
+                    <!-- تکرار رمز عبور -->
+                    <div class="mb-4">
+                        <label for="password_confirm" class="form-label">تکرار رمز عبور *</label>
+                        <input type="password" class="form-control" id="password_confirm"
+                               name="password_confirm" placeholder="رمز عبور را مجدداً وارد کنید"
+                               minlength="8" required>
+                    </div>
+
+                    <!-- دکمه ثبت‌نام -->
+                    <button type="submit" class="btn btn-primary w-100 py-2 mb-3">
+                        ثبت‌نام
+                    </button>
+
+                    <hr class="my-3">
+
+                    <p class="text-center mb-0">
+                        قبلاً ثبت‌نام کرده‌اید؟
+                        <a href="{% url 'account:login' %}" style="color: #667eea; font-weight: bold;">
+                            وارد شوید
+                        </a>
+                    </p>
+                </form>
+            </div>
+        </div>
+
+        <!-- دکمه بازگشت به صفحه اصلی -->
+        <div class="text-center mt-3">
+            <a href="/" class="text-white text-decoration-none">
+                ← بازگشت به صفحه اصلی
+            </a>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- اعتبارسنجی فرم -->
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const password = document.getElementById('password').value;
+            const passwordConfirm = document.getElementById('password_confirm').value;
+
+            if (password !== passwordConfirm) {
+                e.preventDefault();
+                alert('رمز عبور و تکرار آن مطابقت ندارند!');
+            }
+        });
+    </script>
+</body>
+</html>
