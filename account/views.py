@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render ,redirect , get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -60,3 +61,59 @@ def login_view(request):
             messages.error(request,'Invalid username or password')
 
     return render(request, 'account/login.html')
+
+@login_required
+def logout_view(request):
+    logout(request)
+    messages.success(request,'logout seccessfully')
+    return redirect('home')
+
+
+
+@login_required
+def verify_phone_number(request):
+    user = request.user
+
+    # اگر قبلاً تایید شده باشد
+    if user.is_phone_verified:
+        messages.info(request, 'شماره موبایل شما قبلاً تایید شده است.')
+        return redirect('account:login')
+
+    if request.method == 'POST':
+        code = request.POST.get('code')
+
+        try:
+            otp = OTPCode.objects.get(
+                phone_number=user.phone_number,
+                code=code,
+                is_used=False
+            )
+
+            if otp.is_expired():
+                messages.error(request, 'کد تایید منقضی شده است.')
+                return render(request, 'accounts/verify_phone.html', {'user': user})
+
+            # تایید شماره
+            user.is_phone_verified = True
+            user.save()
+
+            otp.is_used = True
+            otp.save()
+
+            messages.success(request, 'شماره موبایل شما با موفقیت تایید شد.')
+            return redirect('account:login')
+
+        except OTPCode.DoesNotExist:
+            messages.error(request, 'کد تایید اشتباه است.')
+
+    return render(request, 'accounts/verify_phone.html', {'user': user})
+
+
+@login_required
+def resend_otp(request):
+    user = request.user
+
+    # ساخت OTP جدید
+    OTPCode.objects.create(phone_number=user.phone_number)
+
+    return JsonResponse({"success": True})

@@ -126,6 +126,8 @@ class SalonOwnerProfile(models.Model):
 
 class OTPCode(models.Model):
 
+    DoesNotExist = None
+    objects = None
     phone_number = models.CharField(max_length=11 , verbose_name='phone number' , null=True, blank=True)
     code = models.CharField(max_length=6, verbose_name='code' , null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True , verbose_name='created at' , null=True, blank=True)
